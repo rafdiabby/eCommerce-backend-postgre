@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  id      Int     @id(map: "address_pkey") @default(autoincrement())
+  user_id Int?
+  address String? @db.VarChar
+  User    User?   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "address_user_id_fkey")
+}
+
+model Admin {
+  id      Int   @id(map: "admin_pkey") @default(autoincrement())
+  user_id Int?
+  User    User? @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "admin_user_id_fkey")
+}
+
+model CartItem {
+  id              Int             @id(map: "cart_item_pkey") @default(autoincrement())
+  amount          Int?
+  is_ordered      Boolean?        @default(false)
+  user_id         Int?
+  product_id      Int?
+  product_variant Int?
+  Product         Product?        @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_item_product_id_fkey")
+  ProductVariant  ProductVariant? @relation(fields: [product_variant], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_item_product_variant_fkey")
+  User            User?           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_item_user_id_fkey")
+  CartOrder       CartOrder[]
+}
+
+model CartOrder {
+  id        Int       @id(map: "cart_order_pkey") @default(autoincrement())
+  cart_item Int?
+  order_id  Int?
+  CartItem  CartItem? @relation(fields: [cart_item], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_order_cart_item_fkey")
+  Order     Order?    @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_order_otder_id_fkey")
+}
+
+model Category {
+  id       Int       @id(map: "category_pkey") @default(autoincrement())
+  category String?   @db.VarChar
+  Product  Product[]
+}
+
+model Order {
+  id         Int         @id(map: "order_pkey") @default(autoincrement())
+  user_id    Int?
+  status     String?     @db.VarChar
+  created_at DateTime?   @default(now()) @db.Timestamp(6)
+  User       User?       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_user_id_fkey")
+  CartOrder  CartOrder[]
+}
+
+model Product {
+  id             Int              @id(map: "product_pkey") @default(autoincrement())
+  eskau          String?          @db.VarChar
+  title          String?          @db.VarChar
+  description    String?          @db.VarChar
+  price          Int?
+  discount       Int?
+  is_available   Boolean?         @default(true)
+  is_discount    Boolean?         @default(false)
+  category_id    Int?
+  created_at     DateTime?        @default(now()) @db.Timestamp(6)
+  Category       Category?        @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_category_id_fkey")
+  CartItem       CartItem[]
+  ProductVariant ProductVariant[]
+  Product_image  Product_image[]
+}
+
+model ProductVariant {
+  id           Int        @id(map: "product_variant_pkey") @default(autoincrement())
+  product_id   Int?
+  variant_name String?    @db.VarChar
+  stock        Int?
+  Product      Product?   @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_variant_product_id_fkey")
+  CartItem     CartItem[]
+}
+
+model Product_image {
+  id         Int       @id(map: "product_image_pkey") @default(autoincrement())
+  product_id Int?
+  image_link String?   @db.VarChar
+  image_name String?   @db.VarChar
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  Product    Product?  @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "product_image_product_id_fkey")
+}
+
+model User {
+  id         Int        @id(map: "user_pkey") @default(autoincrement())
+  username   String?    @db.VarChar
+  password   String?    @db.VarChar(50)
+  email      String?    @db.VarChar
+  created_at DateTime?  @default(now()) @db.Timestamp(6)
+  Address    Address[]
+  Admin      Admin[]
+  CartItem   CartItem[]
+  Order      Order[]
+}
