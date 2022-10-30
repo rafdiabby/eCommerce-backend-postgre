@@ -13,7 +13,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.ts"
+    "dev": "nodemon index.js",
+    "query": "npx ts-node util/prisma_help.ts"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,7 @@
   "homepage": "https://github.com/rafdiabby/eCommerce-backend-postgre#readme",
   "description": "",
   "devDependencies": {
+    "@types/express": "^4.17.14",
     "@types/node": "^18.11.3",
     "nodemon": "^2.0.20",
     "prisma": "^4.5.0",

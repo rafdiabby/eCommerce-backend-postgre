@@ -62,7 +62,7 @@ model Product {
   title          String?          @db.VarChar
   description    String?          @db.VarChar
   price          Int?
-  discount       Int?
+  discount       Int?             @default(0)
   is_available   Boolean?         @default(true)
   is_discount    Boolean?         @default(false)
   category_id    Int?
@@ -94,11 +94,16 @@ model Product_image {
 model User {
   id         Int        @id(map: "user_pkey") @default(autoincrement())
   username   String?    @db.VarChar
-  password   String?    @db.VarChar(50)
+  password   String?    @db.VarChar(256)
   email      String?    @db.VarChar
   created_at DateTime?  @default(now()) @db.Timestamp(6)
   Address    Address[]
   Admin      Admin[]
   CartItem   CartItem[]
   Order      Order[]
+}
+
+model Token {
+  id            BigInt @id @default(autoincrement())
+  refresh_token String @db.VarChar
 }
